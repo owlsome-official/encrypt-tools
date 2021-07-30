@@ -15,7 +15,7 @@ import { DECRYPTION_MODE, ENCRYPTION_MODE } from './utils/constants';
 const DEMO_KEY = "67890123456789012345678901234567"
 const DEMO_IV = "6789012345678901"
 const DEMO_INPUT = `{"firstname":"Chinnawat","lastname":"Chimdee"}`
-const DEMO_RESULT = decryptAES(DEMO_KEY, DEMO_IV, DEMO_INPUT)
+const DEMO_RESULT = encryptAES(DEMO_KEY, DEMO_IV, DEMO_INPUT)
 
 function App({ history }) {
   const [key, setKey] = useState(DEMO_KEY)
@@ -49,7 +49,7 @@ function App({ history }) {
     <div className="App h-screen w-full flex justify-center items-center bg-black">
       <div className="divide-y divide-gray-300 w-100 max-w-prose bg-white-default py-4 rounded-2xl">
 
-        <Title name="AES Encrypt & Decrypt Tool" />
+        <Title name="AES Encrypt & Decrypt Tools" />
         <Navbar mode={mode} />
         <InputGroup grid="2">
           <InputWithLabel

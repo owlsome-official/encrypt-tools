@@ -255,6 +255,7 @@ module.exports = {
     },
     fontFamily: {
       sans: [
+        'Muli',
         '"Noto Sans"',
         'ui-sans-serif',
         'system-ui',

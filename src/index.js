@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
 import './index.css';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { BASENAME } from './utils/constants';
 
 ReactDOM.render(
-  <BrowserRouter>
+  <BrowserRouter basename={BASENAME}>
     <React.StrictMode>
       <Switch>
         <Route path="/" exact>

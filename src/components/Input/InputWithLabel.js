@@ -1,8 +1,9 @@
 import React from 'react'
 
 function InputWithLabel({ name, label, value, onChange, placeholder, span = "" }) {
+  let colSpan = `col-span-${!!span ? span : "1"}`
   return (
-    <div className={`col-span-${span ? span : "1"} pb-4`}>
+    <div className={`${colSpan} pb-4`}>
       <label htmlFor={name} className="text-xl block font-bold pb-2">{label}</label>
       <input
         name={name}
