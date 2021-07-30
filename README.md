@@ -17,4 +17,4 @@ Th encrypt & decrypt tool with interactive web-app.
 
 ## 💡 DEMO
 
-- [http://buildingwatsize.github.io/encrypt-tool](http://buildingwatsize.github.io/encrypt-tool)
+- [http://buildingwatsize.github.io/encrypt-tools](http://buildingwatsize.github.io/encrypt-tools)
