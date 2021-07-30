@@ -1,8 +1,8 @@
 {
-  "name": "encrypt-tool",
-  "version": "0.1.0",
+  "name": "encrypt-tools",
+  "version": "0.1.1",
   "private": true,
-  "homepage": "http://buildingwatsize.github.io/encrypt-tool",
+  "homepage": "http://buildingwatsize.github.io/encrypt-tools",
   "dependencies": {
     "@craco/craco": "^6.2.0",
     "@testing-library/jest-dom": "^5.11.4",
