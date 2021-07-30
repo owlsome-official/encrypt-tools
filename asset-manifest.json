@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/encrypt-tool/static/css/main.9b4da9d3.chunk.css",
+    "main.js": "/encrypt-tool/static/js/main.9ebca244.chunk.js",
+    "main.js.map": "/encrypt-tool/static/js/main.9ebca244.chunk.js.map",
+    "runtime-main.js": "/encrypt-tool/static/js/runtime-main.a91854a6.js",
+    "runtime-main.js.map": "/encrypt-tool/static/js/runtime-main.a91854a6.js.map",
+    "static/js/2.037af30d.chunk.js": "/encrypt-tool/static/js/2.037af30d.chunk.js",
+    "static/js/2.037af30d.chunk.js.map": "/encrypt-tool/static/js/2.037af30d.chunk.js.map",
+    "static/js/3.5f15e6f3.chunk.js": "/encrypt-tool/static/js/3.5f15e6f3.chunk.js",
+    "static/js/3.5f15e6f3.chunk.js.map": "/encrypt-tool/static/js/3.5f15e6f3.chunk.js.map",
+    "index.html": "/encrypt-tool/index.html",
+    "static/css/main.9b4da9d3.chunk.css.map": "/encrypt-tool/static/css/main.9b4da9d3.chunk.css.map",
+    "static/js/2.037af30d.chunk.js.LICENSE.txt": "/encrypt-tool/static/js/2.037af30d.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a91854a6.js",
+    "static/js/2.037af30d.chunk.js",
+    "static/css/main.9b4da9d3.chunk.css",
+    "static/js/main.9ebca244.chunk.js"
+  ]
+}
