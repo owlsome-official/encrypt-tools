@@ -1,13 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import './index.css';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <BrowserRouter>
+    <React.StrictMode>
+      <Switch>
+        <Route path="/" exact>
+          <Redirect to="/encrypt" />
+        </Route>
+        <Route path="/:mode" children={<App />} />
+      </Switch>
+    </React.StrictMode>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
