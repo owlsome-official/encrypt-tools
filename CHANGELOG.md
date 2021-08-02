@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.1.4
+
+- [Added] Footer and Version
+- [Added] `404.html` page
+
+## v0.1.3
+
+- [Added] Redirect when not match any route
+
 ## v0.1.2
 
 - [Added] URL basename

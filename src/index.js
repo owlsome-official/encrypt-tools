@@ -15,7 +15,7 @@ ReactDOM.render(
         <Route path="/" exact>
           <Redirect to="/encrypt" />
         </Route>
-        <Route path="/:mode" children={<App />} />
+        <Route path="/:mode" component={App} />
         <Redirect to="/encrypt" />
       </Switch>
     </React.StrictMode>

@@ -9,6 +9,7 @@ import InputGroup from './components/Input/InputGroup';
 import InputWithLabel from './components/Input/InputWithLabel';
 import TextareaWithLabel from './components/Input/TextareaWithLabel';
 import ResultSection from './components/ResultSection';
+import Footer from './components/Footer';
 import { decryptAES, encryptAES } from './utils/crypto';
 import { DECRYPTION_MODE, ENCRYPTION_MODE } from './utils/constants';
 
@@ -77,6 +78,7 @@ function App({ history }) {
         </InputGroup>
         <ResultSection result={result} />
 
+        <Footer />
       </div>
     </div>
   );
