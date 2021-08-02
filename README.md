@@ -13,7 +13,7 @@ Th encrypt & decrypt tool with interactive web-app.
 
 ## 🏷 Version
 
-- [v0.1.0] Supported AES Encryption & Decryption with `Key` and `IV`
+- Checkout with [CHANGELOG.md](./CHANGELOG.md)
 
 ## 💡 DEMO
 
