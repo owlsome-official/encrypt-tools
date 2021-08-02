@@ -1,10 +1,9 @@
 import React from 'react'
 
-function InputGroup({ children, grid = "" }) {
-  let gridCols = !!grid ? "grid-cols-" + grid : ""
+function InputGroup({ children }) {
   return (
     <div className="px-8 py-4">
-      <div className={`grid gap-4 ${gridCols}`}>
+      <div className="flex flex-wrap -mx-4">
         {children}
       </div>
     </div>

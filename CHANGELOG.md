@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.5
+
+- [Edited] UI Responsive
+- [Edited] Changed `grid` into `flex`
+
 ## v0.1.4
 
 - [Added] Footer and Version

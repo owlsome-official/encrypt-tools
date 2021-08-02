@@ -47,13 +47,14 @@ function App({ history }) {
   }
 
   return (
-    <div className="App h-screen w-full flex justify-center items-center bg-black">
-      <div className="divide-y divide-gray-300 w-100 max-w-prose bg-white-default py-4 rounded-2xl">
+    <div className="App h-screen w-screen flex justify-center items-center bg-black">
+      <div className="divide-y divide-gray-300 w-full sm:max-w-prose bg-white-default py-4 rounded-2xl m-4">
 
         <Title name="AES Encrypt & Decrypt Tools" />
         <Navbar mode={mode} />
-        <InputGroup grid="2">
+        <InputGroup>
           <InputWithLabel
+            className="w-1/2"
             name="key"
             label="Key:"
             value={key}
@@ -61,6 +62,7 @@ function App({ history }) {
             placeholder="Enter Key"
           />
           <InputWithLabel
+            className="w-1/2"
             name="iv"
             label="IV:"
             value={iv}
@@ -68,7 +70,7 @@ function App({ history }) {
             placeholder="Enter IV"
           />
           <TextareaWithLabel
-            span="2"
+            className="w-full"
             name="input"
             label="Input:"
             value={input}
