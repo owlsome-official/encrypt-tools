@@ -17,4 +17,5 @@ Th encrypt & decrypt tool with interactive web-app.
 
 ## 💡 DEMO
 
-- [http://buildingwatsize.github.io/encrypt-tools](http://buildingwatsize.github.io/encrypt-tools)
+- [https://encrypt-tools.vercel.app/encrypt-tools/encrypt](https://encrypt-tools.vercel.app/encrypt-tools/encrypt)
+- ~~[http://buildingwatsize.github.io/encrypt-tools](http://buildingwatsize.github.io/encrypt-tools)~~ `Old Version`
