@@ -1,0 +1,26 @@
+---
+import Footer from "@/components/common/Footer.astro";
+import Header from "@/components/common/Header.astro";
+import EncryptionForm from "@/components/form";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <Card className="w-full divide-y sm:max-w-prose">
+    <CardHeader>
+      <Header />
+    </CardHeader>
+    <CardContent>
+      <EncryptionForm client:load />
+    </CardContent>
+    <CardFooter>
+      <Footer />
+    </CardFooter>
+  </Card>
+</Layout>

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0
+
+- [Edited] Re-structure into Astro ✨
+
 ## v0.1.5
 
 - [Edited] UI Responsive

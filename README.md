@@ -1,15 +1,25 @@
-# Encrypt-tools
+# encrypt-tools
 
-Th encrypt & decrypt tool with interactive web-app.
+The AES encryption & decryption tools with interactive web-app.
+
+![preview](docs/preview.jpg)
+
+## Table of Contents
+- [encrypt-tools](#encrypt-tools)
+  - [Table of Contents](#table-of-contents)
+  - [📦 Build with](#-build-with)
+  - [📋 Features](#-features)
+  - [🏷 Version](#-version)
+  - [💡 DEMO](#-demo)
 
 ## 📦 Build with
 
-- [TailwindCSS](https://tailwindcss.com/)
-- [create-react-app](https://github.com/facebook/create-react-app)
+- [Astro](https://astro.build/)
+- [tailwindCSS](https://tailwindcss.com/)
 
 ## 📋 Features
 
-- AES Encryption & Decryption by `key` and `iv`
+- AES Encryption & Decryption by `key` and `iv` with ease
 
 ## 🏷 Version
 
@@ -18,4 +28,5 @@ Th encrypt & decrypt tool with interactive web-app.
 ## 💡 DEMO
 
 - [https://encrypt-tools.vercel.app/encrypt-tools/encrypt](https://encrypt-tools.vercel.app/encrypt-tools/encrypt)
-- ~~[http://buildingwatsize.github.io/encrypt-tools](http://buildingwatsize.github.io/encrypt-tools)~~ `Old Version`
+
+> made with ❤️ by buildingwatsize
