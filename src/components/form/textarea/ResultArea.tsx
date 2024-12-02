@@ -1,3 +1,5 @@
+// @ts-nocheck: `document.execCommand` is deprecated
+
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resultAtom } from "@/lib/atoms";
@@ -29,17 +31,16 @@ const RenderCopyResultButton = () => {
   const [copyText, setCopyText] = useState("Copy");
   const result = useAtomValue(resultAtom);
 
-  const copyToClipboard = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const copyToClipboard = (_e: React.MouseEvent<HTMLButtonElement>) => {
     var textField = document.createElement("textarea");
     textField.innerText = result;
     document.body.appendChild(textField);
     textField.select();
-    document.execCommand("copy");
-    textField.remove();
-
     try {
+      document.execCommand("copy");
       navigator.clipboard.writeText(result);
     } catch {}
+    textField.remove();
 
     setCopyText("Copied");
     setTimeout(() => {

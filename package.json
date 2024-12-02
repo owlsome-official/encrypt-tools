@@ -1,7 +1,7 @@
 {
   "name": "encrypt-tools",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,6 +13,7 @@
     "format": "prettier --plugin=prettier-plugin-astro --plugin=prettier-plugin-tailwindcss --write ."
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/react": "^3.6.3",
     "@astrojs/tailwind": "^5.1.2",
     "@radix-ui/react-label": "^2.1.0",

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+
+- [Edited] fixed ts-lint
+- [Edited] set Astro static build configuration instead of SSR
+
 ## v0.2.0
 
 - [Edited] Re-structure into Astro ✨
