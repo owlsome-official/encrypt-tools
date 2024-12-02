@@ -28,6 +28,7 @@ The AES encryption & decryption tools with interactive web-app.
 
 ## 💡 DEMO
 
-- [https://encrypt-tools.vercel.app/encrypt-tools/encrypt](https://encrypt-tools.vercel.app/encrypt-tools/encrypt)
+- `[moved]` ~~[https://encrypt-tools.vercel.app/encrypt-tools/encrypt](https://encrypt-tools.vercel.app/encrypt-tools/encrypt)~~
+- `[new ✨]` [https://encrypt-tools.onrender.com/](https://encrypt-tools.onrender.com/)
 
 > made with ❤️ by buildingwatsize
