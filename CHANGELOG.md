@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0
+
+- [Edited] Updated `Astro 5.3`, `React 19`, `tailwindcss v4`, `vitest v3`, and much more deps
+
 ## v0.2.1
 
 - [Edited] fixed ts-lint
