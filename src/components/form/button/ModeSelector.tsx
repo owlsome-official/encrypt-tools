@@ -13,7 +13,7 @@ const ModeSelector = () => {
       <Button
         className={cn(
           mode !== "encrypt" &&
-            "border border-solid border-primary bg-white/80 text-primary",
+            "border-primary text-primary border border-solid bg-white/80",
           "w-full gap-1 rounded-2xl hover:text-white",
         )}
         variant={mode === "encrypt" ? "default" : "outline"}
@@ -27,7 +27,7 @@ const ModeSelector = () => {
       <Button
         className={cn(
           mode !== "decrypt" &&
-            "border border-solid border-primary bg-white/80 text-primary",
+            "border-primary text-primary border border-solid bg-white/80",
           "w-full gap-1 rounded-2xl hover:text-white",
         )}
         variant={mode === "decrypt" ? "default" : "outline"}

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1
+
+- [Edited] Bump version to 0.3.1
+
 ## v0.3.0
 
 - [Edited] Updated `Astro 5.3`, `React 19`, `tailwindcss v4`, `vitest v3`, and much more deps

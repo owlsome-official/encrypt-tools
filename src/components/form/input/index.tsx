@@ -15,7 +15,7 @@ const InputWithLabel = ({ label, ...rest }: InputWithLabelProps) => {
       <Input
         {...rest}
         className={cn(
-          "inline-block w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border bg-white px-4 py-2 ring-1 ring-background/20 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent",
+          "ring-background/20 focus-visible:ring-accent inline-block w-full overflow-x-auto rounded-md border bg-white px-4 py-2 break-words whitespace-pre-wrap ring-1 focus-visible:ring-2 focus-visible:outline-hidden",
           rest.className,
         )}
       />

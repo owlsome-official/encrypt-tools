@@ -18,7 +18,7 @@ const ResultAreaWithCopy = () => {
           <RenderCopyResultButton />
         </Suspense>
       </div>
-      <pre className="inline-block h-40 max-h-40 w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border bg-white/80 px-4 py-2">
+      <pre className="inline-block h-40 max-h-40 w-full overflow-x-auto rounded-md border bg-white/80 px-4 py-2 break-words whitespace-pre-wrap">
         <Suspense fallback={"loading..."}>
           <RenderResult />
         </Suspense>
@@ -51,7 +51,7 @@ const RenderCopyResultButton = () => {
   return (
     <Button
       variant={"outline"}
-      className="gap-1 rounded-2xl border border-solid border-primary bg-white/80 px-6 text-primary hover:text-white"
+      className="border-primary text-primary gap-1 rounded-2xl border border-solid bg-white/80 px-6 hover:text-white"
       onClick={copyToClipboard}
       size={"sm"}
     >

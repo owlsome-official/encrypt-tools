@@ -16,7 +16,7 @@ const InputArea = ({
         rows={6}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="inline-block w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border bg-white px-4 py-2 ring-1 ring-background/20 focus:outline-hidden focus:ring-2 focus:ring-accent"
+        className="ring-background/20 focus:ring-accent inline-block w-full overflow-x-auto rounded-md border bg-white px-4 py-2 break-words whitespace-pre-wrap ring-1 focus:ring-2 focus:outline-hidden"
         {...rest}
       />
     </div>
