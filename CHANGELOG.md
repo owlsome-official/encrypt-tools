@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.2
+
+- [Edited] updated deps
+
 ## v0.3.1
 
 - [Edited] Bump version to 0.3.1
