@@ -19,11 +19,13 @@ const InputWithLabel = ({
 
   return (
     <div className="w-full space-y-0.5">
-      <div className="flex items-center gap-2 justify-between">
+      <div className="flex items-center justify-between gap-2">
         <Label htmlFor={rest.id} className="text-lg font-bold">
           {label}
         </Label>
-        {hasBase64Toggle && <Base64Toggle active={isBase64} onChange={onBase64Change} />}
+        {hasBase64Toggle && (
+          <Base64Toggle active={isBase64} onChange={onBase64Change} />
+        )}
       </div>
       <Input
         {...rest}

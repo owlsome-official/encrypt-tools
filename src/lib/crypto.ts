@@ -30,15 +30,22 @@ export const isLikelyBase64IV = (value: string): boolean => {
   return decoded !== null && decoded.length === VALID_AES_IV_BYTES;
 };
 
-const decodeBase64ToBuffer = (value: string): Uint8Array =>
-  new Uint8Array(
-    atob(value)
-      .split("")
-      .map((c) => c.charCodeAt(0)),
-  );
+const decodeBase64ToBuffer = (value: string): Uint8Array<ArrayBuffer> => {
+  const raw = atob(value);
+  const buf = new ArrayBuffer(raw.length);
+  const view = new Uint8Array(buf);
+  for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
+  return view;
+};
 
-const resolveBuffer = (value: string, isBase64: boolean): Uint8Array =>
-  isBase64 ? decodeBase64ToBuffer(value) : new TextEncoder().encode(value);
+const resolveBuffer = (
+  value: string,
+  isBase64: boolean,
+): Uint8Array<ArrayBuffer> => {
+  if (isBase64) return decodeBase64ToBuffer(value);
+  const encoded = new TextEncoder().encode(value);
+  return new Uint8Array(encoded.buffer.slice(0, encoded.byteLength));
+};
 
 export const encrypt = async (
   plaintext: string,
@@ -94,11 +101,7 @@ export const decrypt = async (
     }
     const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
     const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
-    const ciphertextBuffer = new Uint8Array(
-      atob(ciphertext)
-        .split("")
-        .map((c) => c.charCodeAt(0)),
-    );
+    const ciphertextBuffer = decodeBase64ToBuffer(ciphertext);
 
     const algorithm = {
       name: "AES-CBC",

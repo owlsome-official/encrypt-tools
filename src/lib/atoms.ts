@@ -1,5 +1,10 @@
 import { atom } from "jotai";
-import { decrypt, encrypt, isLikelyBase64IV, isLikelyBase64Key } from "./crypto";
+import {
+  decrypt,
+  encrypt,
+  isLikelyBase64IV,
+  isLikelyBase64Key,
+} from "./crypto";
 
 const DEFAULT_MODE = "encrypt";
 const DEFAULT_KEY = "67890123456789012345678901234567";

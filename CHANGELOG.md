@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.1
+
+- [Fixed] TypeScript strict typing error for `Uint8Array<ArrayBufferLike>` incompatible with `BufferSource`
+- [Edited] Refactored `decodeBase64ToBuffer` and `resolveBuffer` to return `Uint8Array<ArrayBuffer>` for Web Crypto API compatibility
+
 ## v0.4.0
 
 - [Added] Base64 auto-detection and manual toggle for Key and IV inputs
