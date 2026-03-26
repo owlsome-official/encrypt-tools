@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4.0
+
+- [Added] Base64 auto-detection and manual toggle for Key and IV inputs
+- [Added] `Base64Toggle` pill-button component with accessible switch role
+- [Edited] Upgraded `Astro` v5 -> v6, `@astrojs/react` v4 -> v5
+- [Edited] Refactored crypto module to support Base64-encoded key/IV via `resolveBuffer`
+- [Edited] Refactored Jotai atoms with auto-detect and manual-override pattern for Base64 state
+
 ## v0.3.2
 
 - [Edited] updated deps
