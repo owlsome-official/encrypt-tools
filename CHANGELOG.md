@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.2
+
+- [Edited] Updated dependencies
+- [Edited] Upgraded Astro v6 -> v7, `@astrojs/react` v5 -> v6
+- [Edited] Removed deprecated `@astrojs/tailwind` (using `@tailwindcss/vite` directly)
+- [Edited] Pinned TypeScript to 6.x (ecosystem compatibility)
+
 ## v0.4.1
 
 - [Fixed] TypeScript strict typing error for `Uint8Array<ArrayBufferLike>` incompatible with `BufferSource`
