@@ -10,5 +10,19 @@ export default defineConfig({
 
   integrations: [react()],
 
+  // Pages accept encryption keys: only same-origin and Astro-hashed scripts may run.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "connect-src 'self'",
+        "img-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ],
+    },
+  },
+
   vite: { plugins: [tailwindcss()] },
 });

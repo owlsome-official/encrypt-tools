@@ -1,5 +1,5 @@
 ---
-// const buyMeACoffeeLink = "https://www.buymeacoffee.com/watsize";
+const buyMeACoffeeLink = "https://www.buymeacoffee.com/watsize";
 const githubLink = "https://github.com/owlsome-official/encrypt-tools";
 ---
 
@@ -32,18 +32,16 @@ const githubLink = "https://github.com/owlsome-official/encrypt-tools";
         ></path>
       </svg>
     </a>
-    <script
-      is:inline
-      data-name="BMC-Widget"
-      data-cfasync="false"
-      src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-      data-id="watsize"
-      data-description="Support me on Buy me a coffee!"
-      data-message="Thank you for visiting. You can now buy me a coffee."
-      data-color="#E94560"
-      data-position="Right"
-      data-x_margin="18"
-      data-y_margin="18"></script>
+    <span aria-hidden="true">·</span>
+    <a
+      href={buyMeACoffeeLink}
+      class="underline"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Support Watsize on Buy me a coffee"
+    >
+      Buy me a coffee
+    </a>
   </div>
 </footer>
 
