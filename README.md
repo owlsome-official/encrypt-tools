@@ -23,7 +23,7 @@ The AES encryption & decryption tools with interactive web-app.
 
 ## 📋 Features
 
-- AES-CBC Encryption & Decryption by `key` and `iv` with ease
+- AES-CBC Encryption & Decryption by `key` with ease; every message gets a fresh random IV, prepended to the ciphertext as `base64(iv || ciphertext)`
 - Base64 auto-detection for Key and IV inputs with manual toggle override
 - Web Crypto API powered (no server-side dependency)
 
