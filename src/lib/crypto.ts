@@ -1,12 +1,12 @@
 interface Base64Options {
   keyIsBase64?: boolean;
-  ivIsBase64?: boolean;
 }
 
 const BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
 
+const AES_CBC = "AES-CBC";
 const VALID_AES_KEY_BYTES = new Set([16, 24, 32]);
-const VALID_AES_IV_BYTES = 16;
+const IV_BYTES = 16;
 
 const safeAtob = (value: string): string | null => {
   try {
@@ -23,19 +23,18 @@ export const isLikelyBase64Key = (value: string): boolean => {
   return decoded !== null && VALID_AES_KEY_BYTES.has(decoded.length);
 };
 
-export const isLikelyBase64IV = (value: string): boolean => {
-  if (!value || value.length < 4 || !BASE64_RE.test(value)) return false;
-  if (value.length === VALID_AES_IV_BYTES) return false;
-  const decoded = safeAtob(value);
-  return decoded !== null && decoded.length === VALID_AES_IV_BYTES;
-};
-
 const decodeBase64ToBuffer = (value: string): Uint8Array<ArrayBuffer> => {
   const raw = atob(value);
   const buf = new ArrayBuffer(raw.length);
   const view = new Uint8Array(buf);
   for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i);
   return view;
+};
+
+const encodeBufferToBase64 = (bytes: Uint8Array): string => {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
 };
 
 const resolveBuffer = (
@@ -47,84 +46,89 @@ const resolveBuffer = (
   return new Uint8Array(encoded.buffer.slice(0, encoded.byteLength));
 };
 
-export const encrypt = async (
+const importAesKey = (
+  key: string,
+  options: Base64Options,
+  usage: "encrypt" | "decrypt",
+) =>
+  crypto.subtle.importKey(
+    "raw",
+    resolveBuffer(key, options.keyIsBase64 ?? false),
+    { name: AES_CBC },
+    false,
+    [usage],
+  );
+
+/**
+ * Encrypts with a fresh random IV and returns base64(iv || ciphertext).
+ * An IV must never be reused under the same key.
+ */
+export const encryptMessage = async (
   plaintext: string,
   key: string,
-  iv: string,
   options: Base64Options = {},
-) => {
+): Promise<string> => {
   try {
-    if (!plaintext || !key || !iv) {
+    if (!plaintext || !key) {
       return "";
     }
-    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
-    const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
-    const plaintextBuffer = new TextEncoder().encode(plaintext);
-
-    const algorithm = {
-      name: "AES-CBC",
-      iv: ivBuffer,
-    } as const;
-    const keyObject = await crypto.subtle.importKey(
-      "raw",
-      keyBuffer,
-      algorithm,
-      false,
-      ["encrypt"],
+    const keyObject = await importAesKey(key, options, "encrypt");
+    const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
+    const ciphertext = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: AES_CBC, iv },
+        keyObject,
+        new TextEncoder().encode(plaintext),
+      ),
     );
 
-    const ciphertextBuffer = await crypto.subtle.encrypt(
-      algorithm,
-      keyObject,
-      plaintextBuffer,
-    );
-
-    const ciphertext = btoa(
-      String.fromCharCode.apply(null, [...new Uint8Array(ciphertextBuffer)]),
-    );
-    return ciphertext;
-  } catch (error) {
-    // console.warn(error);
+    const message = new Uint8Array(IV_BYTES + ciphertext.byteLength);
+    message.set(iv);
+    message.set(ciphertext, IV_BYTES);
+    return encodeBufferToBase64(message);
+  } catch {
     return "invalid";
   }
 };
 
-export const decrypt = async (
+/** Decrypts base64(iv || ciphertext) as produced by `encryptMessage`. */
+export const decryptMessage = async (
+  message: string,
+  key: string,
+  options: Base64Options = {},
+): Promise<string> => {
+  try {
+    if (!message || !key) {
+      return "";
+    }
+    const raw = decodeBase64ToBuffer(message);
+    if (raw.byteLength < IV_BYTES * 2 || raw.byteLength % IV_BYTES !== 0) {
+      return "invalid";
+    }
+    const keyObject = await importAesKey(key, options, "decrypt");
+    const plaintext = await crypto.subtle.decrypt(
+      { name: AES_CBC, iv: raw.subarray(0, IV_BYTES) },
+      keyObject,
+      raw.subarray(IV_BYTES),
+    );
+    return new TextDecoder().decode(plaintext);
+  } catch {
+    return "invalid";
+  }
+};
+
+/** @deprecated The IV argument is ignored; use `encryptMessage`. */
+export const encrypt = (
+  plaintext: string,
+  key: string,
+  _iv?: string,
+  options: Base64Options = {},
+) => encryptMessage(plaintext, key, options);
+
+/** @deprecated The IV argument is ignored; use `decryptMessage`. */
+export const decrypt = (
   ciphertext: string,
   key: string,
-  iv: string,
+  _iv?: string,
   options: Base64Options = {},
-) => {
-  try {
-    if (!ciphertext || !key || !iv) {
-      return "";
-    }
-    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
-    const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
-    const ciphertextBuffer = decodeBase64ToBuffer(ciphertext);
-
-    const algorithm = {
-      name: "AES-CBC",
-      iv: ivBuffer,
-    } as const;
-    const keyObject = await crypto.subtle.importKey(
-      "raw",
-      keyBuffer,
-      algorithm,
-      false,
-      ["decrypt"],
-    );
-
-    const plaintextBuffer = await crypto.subtle.decrypt(
-      algorithm,
-      keyObject,
-      ciphertextBuffer,
-    );
-
-    const plaintext = new TextDecoder().decode(plaintextBuffer);
-    return plaintext;
-  } catch (error) {
-    // console.warn(error);
-    return "invalid";
-  }
-};
+) => decryptMessage(ciphertext, key, options);

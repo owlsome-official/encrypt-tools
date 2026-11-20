@@ -8,7 +8,7 @@ const KeyInput = () => {
   const [keyIsBase64, setKeyIsBase64] = useAtom(keyIsBase64Atom);
 
   return (
-    <div className="w-2/3">
+    <div className="w-full">
       <InputWithLabel
         label="Key:"
         value={key}
