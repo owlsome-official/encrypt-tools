@@ -6,7 +6,7 @@ describe.concurrent("encrypt", () => {
     const key = "67890123456789012345678901234567";
     const iv = "6789012345678901";
     const plaintext = `{"firstname":"Chinnawat","lastname":"Chimdee"}`;
-    const expected = `FDp1Dl31zGx5nRXFNKihB+k3ly/L7HI9tlHycbKVRwhaf3RRdyFGviuntEZqst0/`;
+    const expected = `FDp1Dl31zGx5nRXFNKihB+k3ly/L7HI9tlHycbKVRwhaf3RRdyFGviuntEZqst0/DDyX2vy8RS61d/qlhx/v4RcB1Vcpcimmr2xKDold2uA=`;
     const actual = await encrypt(plaintext, key, iv);
     expect(actual).eq(expected);
   });
@@ -24,7 +24,7 @@ describe.concurrent("decrypt", () => {
   test("should decrypt correctly", async () => {
     const key = "67890123456789012345678901234567";
     const iv = "6789012345678901";
-    const ciphertext = `FDp1Dl31zGx5nRXFNKihB+k3ly/L7HI9tlHycbKVRwhaf3RRdyFGviuntEZqst0/`;
+    const ciphertext = `FDp1Dl31zGx5nRXFNKihB+k3ly/L7HI9tlHycbKVRwhaf3RRdyFGviuntEZqst0/DDyX2vy8RS61d/qlhx/v4RcB1Vcpcimmr2xKDold2uA=`;
     const expected = `{"firstname":"Chinnawat","lastname":"Chimdee"}`;
     const actual = await decrypt(ciphertext, key, iv);
     expect(actual).eq(expected);
