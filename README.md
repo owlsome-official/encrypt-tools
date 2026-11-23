@@ -24,6 +24,7 @@ The AES encryption & decryption tools with interactive web-app.
 ## 📋 Features
 
 - AES-CBC Encryption & Decryption by `key` and `iv` with ease
+- Authenticated ciphertext: an HMAC-SHA256 tag (key derived from `key` via HKDF) over `iv || ciphertext` is appended to the output, and decryption returns `invalid` for any ciphertext whose tag does not match
 - Base64 auto-detection for Key and IV inputs with manual toggle override
 - Web Crypto API powered (no server-side dependency)
 
