@@ -2,19 +2,18 @@ import { atom } from "jotai";
 import {
   decrypt,
   encrypt,
-  isGuessableKey,
   isLikelyBase64IV,
-  isLikelyBase64Key,
+  isLikelyBase64Key
 } from "./crypto";
 
 const DEFAULT_MODE = "encrypt";
+const DEFAULT_KEY = "67890123456789012345678901234567";
 const DEFAULT_IV = "6789012345678901";
 const DEFAULT_INPUT = `{"firstname":"Chinnawat","lastname":"Chimdee"}`;
 
 // primitive atoms
 export const modeAtom = atom<"encrypt" | "decrypt">(DEFAULT_MODE);
-// Must start empty: any key shipped in the bundle is public, so ciphertext made with it is readable by anyone.
-export const keyAtom = atom<string>("");
+export const keyAtom = atom<string>(DEFAULT_KEY);
 export const ivAtom = atom<string>(DEFAULT_IV);
 export const inputAtom = atom<string>(DEFAULT_INPUT);
 
@@ -31,8 +30,6 @@ export const ivIsBase64Atom = atom(
   (get) => get(ivBase64OverrideAtom) ?? isLikelyBase64IV(get(ivAtom)),
   (_get, set, value: boolean) => set(ivBase64OverrideAtom, value),
 );
-
-export const keyIsGuessableAtom = atom((get) => isGuessableKey(get(keyAtom)));
 
 // reset override back to auto-detect when the value changes
 export const keyWithAutoDetectAtom = atom(null, (_get, set, value: string) => {

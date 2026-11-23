@@ -30,29 +30,6 @@ export const isLikelyBase64IV = (value: string): boolean => {
   return decoded !== null && decoded.length === VALID_AES_IV_BYTES;
 };
 
-const DIGITS = "0123456789";
-
-// Digits wrap around (9 -> 0 counts as +1) so runs like "7890123" are caught.
-const charStep = (prev: string, next: string): number => {
-  const prevDigit = DIGITS.indexOf(prev);
-  const nextDigit = DIGITS.indexOf(next);
-  if (prevDigit >= 0 && nextDigit >= 0) {
-    return ((nextDigit - prevDigit + 15) % 10) - 5;
-  }
-  return next.charCodeAt(0) - prev.charCodeAt(0);
-};
-
-// A single repeated character or a straight ascending/descending run, e.g. "aaaa", "123456", "zyxw".
-export const isGuessableKey = (value: string): boolean => {
-  const chars = [...value];
-  if (chars.length < 2) return false;
-  const step = charStep(chars[0], chars[1]);
-  if (Math.abs(step) > 1) return false;
-  return chars.every(
-    (char, i) => i === 0 || charStep(chars[i - 1], char) === step,
-  );
-};
-
 const decodeBase64ToBuffer = (value: string): Uint8Array<ArrayBuffer> => {
   const raw = atob(value);
   const buf = new ArrayBuffer(raw.length);
