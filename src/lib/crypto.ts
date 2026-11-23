@@ -94,7 +94,10 @@ const concat = (
 
 // ─── AAD helpers (browser-safe DataView, no Node Buffer) ─────────────
 
-export const buildAad = (version: number, timestamp: number): Uint8Array => {
+export const buildAad = (
+  version: number,
+  timestamp: number,
+): Uint8Array<ArrayBuffer> => {
   const buf = new ArrayBuffer(AAD_HEADER_BYTES);
   const view = new DataView(buf);
   view.setUint8(0, version & 0xff);
@@ -195,7 +198,9 @@ export const encryptGCM = async (
   try {
     if (!plaintext || !key) return "";
 
-    const nonce = crypto.getRandomValues(new Uint8Array(GCM_NONCE_BYTES));
+    const nonce: Uint8Array<ArrayBuffer> = crypto.getRandomValues(
+      new Uint8Array(GCM_NONCE_BYTES),
+    );
     const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
     const aesKey = await crypto.subtle.importKey(
       "raw",
@@ -211,7 +216,7 @@ export const encryptGCM = async (
       tagLength: GCM_TAG_BITS,
     };
 
-    let prefix: Uint8Array;
+    let prefix: Uint8Array<ArrayBuffer>;
     if (options.aad) {
       const aadBytes = buildAad(options.aad.version, options.aad.timestamp);
       gcmParams.additionalData = aadBytes;
@@ -245,19 +250,27 @@ export const decryptGCM = async (
     const raw = decodeBase64ToBuffer(ciphertext);
     const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
 
-    let nonce: Uint8Array;
-    let sealedBody: Uint8Array;
+    let nonce: Uint8Array<ArrayBuffer>;
+    let sealedBody: Uint8Array<ArrayBuffer>;
     let aadData: AadData | undefined;
-    let aadBytes: Uint8Array | undefined;
+    let aadBytes: Uint8Array<ArrayBuffer> | undefined;
+
+    const asFixed = (u: Uint8Array): Uint8Array<ArrayBuffer> => {
+      const ab = new ArrayBuffer(u.byteLength);
+      new Uint8Array(ab).set(u);
+      return new Uint8Array(ab);
+    };
 
     if (options.aad && raw.byteLength > AAD_HEADER_BYTES + GCM_NONCE_BYTES) {
-      aadBytes = raw.slice(0, AAD_HEADER_BYTES);
+      aadBytes = asFixed(raw.slice(0, AAD_HEADER_BYTES));
       aadData = parseAadHeader(aadBytes);
-      nonce = raw.slice(AAD_HEADER_BYTES, AAD_HEADER_BYTES + GCM_NONCE_BYTES);
-      sealedBody = raw.slice(AAD_HEADER_BYTES + GCM_NONCE_BYTES);
+      nonce = asFixed(
+        raw.slice(AAD_HEADER_BYTES, AAD_HEADER_BYTES + GCM_NONCE_BYTES),
+      );
+      sealedBody = asFixed(raw.slice(AAD_HEADER_BYTES + GCM_NONCE_BYTES));
     } else {
-      nonce = raw.slice(0, GCM_NONCE_BYTES);
-      sealedBody = raw.slice(GCM_NONCE_BYTES);
+      nonce = asFixed(raw.slice(0, GCM_NONCE_BYTES));
+      sealedBody = asFixed(raw.slice(GCM_NONCE_BYTES));
     }
 
     const aesKey = await crypto.subtle.importKey(
