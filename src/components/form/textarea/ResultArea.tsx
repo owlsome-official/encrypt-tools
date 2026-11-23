@@ -1,26 +1,38 @@
 // @ts-nocheck: `document.execCommand` is deprecated
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resultAtom } from "@/lib/atoms";
 import { useAtomValue } from "jotai";
 import { Copy } from "lucide-react";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useSyncExternalStore } from "react";
+
+const subscribeNoop = () => () => {};
+
+const useIsHydrated = () =>
+  useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
 const ResultAreaWithCopy = () => {
+  const isHydrated = useIsHydrated();
+  const copyFallback = <Skeleton className="h-[32px] w-[100px] rounded-full" />;
+  const resultFallback = "loading...";
+
   return (
     <div>
       <div className="flex items-center justify-between pb-2 text-lg font-bold">
         <span>Result:</span>
-        <Suspense
-          fallback={<Skeleton className="h-[32px] w-[100px] rounded-full" />}
-        >
-          <RenderCopyResultButton />
+        <Suspense fallback={copyFallback}>
+          {isHydrated ? <RenderCopyResultButton /> : copyFallback}
         </Suspense>
       </div>
       <pre className="inline-block h-40 max-h-40 w-full overflow-x-auto rounded-md border bg-white/80 px-4 py-2 break-words whitespace-pre-wrap">
-        <Suspense fallback={"loading..."}>
-          <RenderResult />
+        <Suspense fallback={resultFallback}>
+          {isHydrated ? <RenderResult /> : resultFallback}
         </Suspense>
       </pre>
     </div>
@@ -32,7 +44,7 @@ const RenderCopyResultButton = () => {
   const result = useAtomValue(resultAtom);
 
   const copyToClipboard = (_e: React.MouseEvent<HTMLButtonElement>) => {
-    var textField = document.createElement("textarea");
+    const textField = document.createElement("textarea");
     textField.innerText = result;
     document.body.appendChild(textField);
     textField.select();
@@ -60,6 +72,7 @@ const RenderCopyResultButton = () => {
     </Button>
   );
 };
+
 const RenderResult = () => {
   return useAtomValue(resultAtom) || "\n";
 };

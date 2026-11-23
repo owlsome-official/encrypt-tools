@@ -10,6 +10,7 @@ const IVInput = () => {
   return (
     <div className="w-1/3">
       <InputWithLabel
+        id="iv"
         label="IV:"
         value={iv}
         onChange={(e) => setIv(e.target.value)}

@@ -1,17 +1,41 @@
+// ─── Types ───────────────────────────────────────────────────────────
+
+export type Algorithm = "aes-gcm" | "aes-cbc";
+
 interface Base64Options {
   keyIsBase64?: boolean;
   ivIsBase64?: boolean;
 }
 
-const BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
+export interface AadData {
+  version: number;
+  timestamp: number;
+}
 
+interface GCMEncryptOptions extends Base64Options {
+  aad?: AadData;
+}
+
+interface GCMDecryptOptions extends Base64Options {
+  aad?: boolean;
+}
+
+export interface GCMDecryptResult {
+  plaintext: string;
+  aad?: AadData;
+}
+
+// ─── Constants ───────────────────────────────────────────────────────
+
+const BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
 const VALID_AES_KEY_BYTES = new Set([16, 24, 32]);
 const VALID_AES_IV_BYTES = 16;
-const AES_BLOCK_BYTES = 16;
-const MAC_TAG_BYTES = 32;
-const MAC_KEY_INFO = new TextEncoder().encode(
-  "encrypt-tools/aes-cbc-hmac-sha256/mac",
-);
+
+const GCM_NONCE_BYTES = 12;
+const GCM_TAG_BITS = 128;
+const AAD_HEADER_BYTES = 5;
+
+// ─── Helpers ─────────────────────────────────────────────────────────
 
 const safeAtob = (value: string): string | null => {
   try {
@@ -52,78 +76,70 @@ const resolveBuffer = (
   return new Uint8Array(encoded.buffer.slice(0, encoded.byteLength));
 };
 
-const concatBuffers = (
-  first: Uint8Array<ArrayBuffer>,
-  second: Uint8Array<ArrayBuffer>,
+const toBase64 = (bytes: Uint8Array): string =>
+  btoa(String.fromCharCode(...bytes));
+
+const concat = (
+  ...parts: Uint8Array[]
 ): Uint8Array<ArrayBuffer> => {
-  const joined = new Uint8Array(first.byteLength + second.byteLength);
-  joined.set(first, 0);
-  joined.set(second, first.byteLength);
+  const total = parts.reduce((sum, p) => sum + p.byteLength, 0);
+  const joined = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    joined.set(part, offset);
+    offset += part.byteLength;
+  }
   return joined;
 };
 
-const importCipherKeys = async (
-  key: string,
-  iv: string,
-  options: Base64Options,
-  usage: "encrypt" | "decrypt",
-) => {
-  const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
-  const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
-  const algorithm = { name: "AES-CBC", iv: ivBuffer } as const;
+// ─── AAD helpers (browser-safe DataView, no Node Buffer) ─────────────
 
-  const aesKey = await crypto.subtle.importKey(
-    "raw",
-    keyBuffer,
-    algorithm,
-    false,
-    [usage],
-  );
-  const hkdfKey = await crypto.subtle.importKey(
-    "raw",
-    keyBuffer,
-    "HKDF",
-    false,
-    ["deriveKey"],
-  );
-  // The user IV is static, so the tag must stay unforgeable under IV reuse;
-  // AES-GCM does not, HMAC-SHA256 over IV || ciphertext does.
-  const macKey = await crypto.subtle.deriveKey(
-    {
-      name: "HKDF",
-      hash: "SHA-256",
-      salt: new Uint8Array(0),
-      info: MAC_KEY_INFO,
-    },
-    hkdfKey,
-    { name: "HMAC", hash: "SHA-256", length: MAC_TAG_BYTES * 8 },
-    false,
-    [usage === "encrypt" ? "sign" : "verify"],
-  );
-
-  return { algorithm, aesKey, macKey, ivBuffer };
+export const buildAad = (
+  version: number,
+  timestamp: number,
+): Uint8Array<ArrayBuffer> => {
+  const buf = new ArrayBuffer(AAD_HEADER_BYTES);
+  const view = new DataView(buf);
+  view.setUint8(0, version & 0xff);
+  view.setUint32(1, timestamp >>> 0);
+  return new Uint8Array(buf);
 };
 
-export const encrypt = async (
+export const parseAadHeader = (
+  raw: Uint8Array,
+): AadData => {
+  if (raw.byteLength < AAD_HEADER_BYTES) {
+    throw new RangeError("buffer too short for AAD header");
+  }
+  const view = new DataView(raw.buffer, raw.byteOffset, AAD_HEADER_BYTES);
+  return {
+    version: view.getUint8(0),
+    timestamp: view.getUint32(1),
+  };
+};
+
+// ─── AES-CBC (Legacy) ───────────────────────────────────────────────
+
+export const encryptCBC = async (
   plaintext: string,
   key: string,
   iv: string,
   options: Base64Options = {},
-) => {
+): Promise<string> => {
   try {
-    if (!plaintext || !key || !iv) {
-      return "";
-    }
-    const { algorithm, aesKey, macKey, ivBuffer } = await importCipherKeys(
-      key,
-      iv,
-      options,
-      "encrypt",
-    );
+    if (!plaintext || !key || !iv) return "";
+
+    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
+    const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
     const plaintextBuffer = new TextEncoder().encode(plaintext);
 
-    const ciphertextBuffer = new Uint8Array(
-      await crypto.subtle.encrypt(algorithm, aesKey, plaintextBuffer),
+    const algorithm = { name: "AES-CBC", iv: ivBuffer } as const;
+    const keyObject = await crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      algorithm,
+      false,
+      ["encrypt"],
     );
     const tagBuffer = new Uint8Array(
       await crypto.subtle.sign(
@@ -133,54 +149,33 @@ export const encrypt = async (
       ),
     );
 
-    const ciphertext = btoa(
-      String.fromCharCode.apply(null, [
-        ...concatBuffers(ciphertextBuffer, tagBuffer),
-      ]),
-    );
-    return ciphertext;
-  } catch (error) {
-    // console.warn(error);
+    return toBase64(new Uint8Array(ciphertextBuffer));
+  } catch {
     return "invalid";
   }
 };
 
-export const decrypt = async (
+export const decryptCBC = async (
   ciphertext: string,
   key: string,
   iv: string,
   options: Base64Options = {},
-) => {
+): Promise<string> => {
   try {
-    if (!ciphertext || !key || !iv) {
-      return "";
-    }
-    const { algorithm, aesKey, macKey, ivBuffer } = await importCipherKeys(
-      key,
-      iv,
-      options,
-      "decrypt",
-    );
-    const sealedBuffer = decodeBase64ToBuffer(ciphertext);
-    const ciphertextLength = sealedBuffer.byteLength - MAC_TAG_BYTES;
-    if (
-      ciphertextLength < AES_BLOCK_BYTES ||
-      ciphertextLength % AES_BLOCK_BYTES !== 0
-    ) {
-      return "invalid";
-    }
-    const ciphertextBuffer = sealedBuffer.slice(0, ciphertextLength);
-    const tagBuffer = sealedBuffer.slice(ciphertextLength);
+    if (!ciphertext || !key || !iv) return "";
 
-    const isAuthentic = await crypto.subtle.verify(
-      "HMAC",
-      macKey,
-      tagBuffer,
-      concatBuffers(ivBuffer, ciphertextBuffer),
+    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
+    const ivBuffer = resolveBuffer(iv, options.ivIsBase64 ?? false);
+    const ciphertextBuffer = decodeBase64ToBuffer(ciphertext);
+
+    const algorithm = { name: "AES-CBC", iv: ivBuffer } as const;
+    const keyObject = await crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      algorithm,
+      false,
+      ["decrypt"],
     );
-    if (!isAuthentic) {
-      return "invalid";
-    }
 
     const plaintextBuffer = await crypto.subtle.decrypt(
       algorithm,
@@ -188,10 +183,131 @@ export const decrypt = async (
       ciphertextBuffer,
     );
 
-    const plaintext = new TextDecoder().decode(plaintextBuffer);
-    return plaintext;
-  } catch (error) {
-    // console.warn(error);
+    return new TextDecoder().decode(plaintextBuffer);
+  } catch {
     return "invalid";
   }
 };
+
+// ─── AES-GCM (Modern / Authenticated) ───────────────────────────────
+
+export const encryptGCM = async (
+  plaintext: string,
+  key: string,
+  options: GCMEncryptOptions = {},
+): Promise<string> => {
+  try {
+    if (!plaintext || !key) return "";
+
+    const nonce: Uint8Array<ArrayBuffer> = crypto.getRandomValues(
+      new Uint8Array(GCM_NONCE_BYTES),
+    );
+    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      "AES-GCM",
+      false,
+      ["encrypt"],
+    );
+
+    const gcmParams: AesGcmParams = {
+      name: "AES-GCM",
+      iv: nonce,
+      tagLength: GCM_TAG_BITS,
+    };
+
+    let prefix: Uint8Array<ArrayBuffer>;
+    if (options.aad) {
+      const aadBytes = buildAad(options.aad.version, options.aad.timestamp);
+      gcmParams.additionalData = aadBytes;
+      prefix = concat(aadBytes, nonce);
+    } else {
+      prefix = nonce;
+    }
+
+    const sealed = new Uint8Array(
+      await crypto.subtle.encrypt(
+        gcmParams,
+        aesKey,
+        new TextEncoder().encode(plaintext),
+      ),
+    );
+
+    return toBase64(concat(prefix, sealed));
+  } catch {
+    return "invalid";
+  }
+};
+
+export const decryptGCM = async (
+  ciphertext: string,
+  key: string,
+  options: GCMDecryptOptions = {},
+): Promise<GCMDecryptResult> => {
+  try {
+    if (!ciphertext || !key) return { plaintext: "" };
+
+    const raw = decodeBase64ToBuffer(ciphertext);
+    const keyBuffer = resolveBuffer(key, options.keyIsBase64 ?? false);
+
+    let nonce: Uint8Array<ArrayBuffer>;
+    let sealedBody: Uint8Array<ArrayBuffer>;
+    let aadData: AadData | undefined;
+    let aadBytes: Uint8Array<ArrayBuffer> | undefined;
+
+    const asFixed = (u: Uint8Array): Uint8Array<ArrayBuffer> => {
+      const ab = new ArrayBuffer(u.byteLength);
+      new Uint8Array(ab).set(u);
+      return new Uint8Array(ab);
+    };
+
+    if (options.aad && raw.byteLength > AAD_HEADER_BYTES + GCM_NONCE_BYTES) {
+      aadBytes = asFixed(raw.slice(0, AAD_HEADER_BYTES));
+      aadData = parseAadHeader(aadBytes);
+      nonce = asFixed(
+        raw.slice(AAD_HEADER_BYTES, AAD_HEADER_BYTES + GCM_NONCE_BYTES),
+      );
+      sealedBody = asFixed(raw.slice(AAD_HEADER_BYTES + GCM_NONCE_BYTES));
+    } else {
+      nonce = asFixed(raw.slice(0, GCM_NONCE_BYTES));
+      sealedBody = asFixed(raw.slice(GCM_NONCE_BYTES));
+    }
+
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      "AES-GCM",
+      false,
+      ["decrypt"],
+    );
+
+    const gcmParams: AesGcmParams = {
+      name: "AES-GCM",
+      iv: nonce,
+      tagLength: GCM_TAG_BITS,
+    };
+
+    if (aadBytes) {
+      gcmParams.additionalData = aadBytes;
+    }
+
+    const plaintextBuffer = await crypto.subtle.decrypt(
+      gcmParams,
+      aesKey,
+      sealedBody,
+    );
+
+    return {
+      plaintext: new TextDecoder().decode(plaintextBuffer),
+      aad: aadData,
+    };
+  } catch {
+    return { plaintext: "invalid" };
+  }
+};
+
+// ─── Unified dispatch (backward-compatible for CBC) ──────────────────
+
+export const encrypt = encryptCBC;
+export const decrypt = decryptCBC;

@@ -1,9 +1,37 @@
 ---
 import { version as packageVersion } from "@/../package.json";
-const appHeader = `AES Encryption & Decryption Tools v${packageVersion}`;
+const appHeader = `AES Encryption & Decryption Tools`;
 export const prerender = true;
+
+const isLegacy = Astro.url.pathname.includes("legacy");
 ---
 
-<div class="w-full text-center text-xl font-bold sm:text-2xl">
-  {appHeader}
+<div class="w-full space-y-2 text-center">
+  <div class="text-xl font-bold sm:text-2xl">{appHeader}</div>
+  <div class="flex items-center justify-center gap-3 text-xs">
+    <span class="text-muted-foreground">v{packageVersion}</span>
+    <span class="text-muted-foreground">|</span>
+    <a
+      href="/"
+      class:list={[
+        "rounded-full px-3 py-1 transition-colors",
+        !isLegacy
+          ? "bg-primary text-white"
+          : "text-primary bg-muted hover:bg-muted/80",
+      ]}
+    >
+      AES-GCM (Modern)
+    </a>
+    <a
+      href="/legacy"
+      class:list={[
+        "rounded-full px-3 py-1 transition-colors",
+        isLegacy
+          ? "bg-primary text-white"
+          : "text-primary bg-muted hover:bg-muted/80",
+      ]}
+    >
+      AES-CBC (Legacy)
+    </a>
+  </div>
 </div>
