@@ -19,6 +19,7 @@ const LegacyForm = () => {
 
   return (
     <div className="space-y-3">
+      <Separator />
       <div className="flex items-center gap-2 rounded-lg border border-dashed bg-amber-50/50 px-3 py-2 text-xs text-amber-700">
         <span className="font-semibold">AES-CBC (Legacy)</span>
         <span>&mdash; Static IV, PKCS7 padding, no authentication</span>

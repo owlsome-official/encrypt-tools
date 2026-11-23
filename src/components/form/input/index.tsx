@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { InputHTMLAttributes } from "react";
 
@@ -20,9 +19,13 @@ const InputWithLabel = ({
   return (
     <div className="w-full space-y-0.5">
       <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={rest.id} className="text-lg font-bold">
+        <label
+          htmlFor={rest.id}
+          className="text-lg font-bold"
+          data-text={rest.id}
+        >
           {label}
-        </Label>
+        </label>
         {hasBase64Toggle && (
           <Base64Toggle active={isBase64} onChange={onBase64Change} />
         )}

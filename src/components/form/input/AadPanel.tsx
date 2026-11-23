@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAtom, useAtomValue } from "jotai";
 import { Clock, Info } from "lucide-react";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 
 const formatTimestamp = (ts: number): string => {
   try {
@@ -84,6 +84,12 @@ const AadEncryptInputs = () => {
   const [version, setVersion] = useAtom(aadVersionAtom);
   const [timestamp, setTimestamp] = useAtom(aadTimestampAtom);
 
+  useEffect(() => {
+    if (timestamp === 0) {
+      setTimestamp(Math.floor(Date.now() / 1000));
+    }
+  }, [timestamp, setTimestamp]);
+
   const humanDate = useMemo(() => formatTimestamp(timestamp), [timestamp]);
 
   const handleSetNow = () => {
@@ -92,7 +98,7 @@ const AadEncryptInputs = () => {
 
   return (
     <div className="space-y-3 rounded-lg border border-dashed p-3">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-4">
         <div className="w-28">
           <Label className="text-xs font-semibold">Version (0-255)</Label>
           <Input

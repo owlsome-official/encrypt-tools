@@ -1,7 +1,6 @@
 "use client";
 
 import { Separator } from "../ui/separator";
-import AlgorithmSelector from "./button/AlgorithmSelector";
 import ModeSelector from "./button/ModeSelector";
 import AadPanel from "./input/AadPanel";
 import IVInput from "./input/IVInput";
@@ -25,7 +24,6 @@ const EncryptionForm = () => {
 
   return (
     <div className="space-y-3">
-      <AlgorithmSelector />
       <Separator />
       <ModeSelector />
       <Separator />

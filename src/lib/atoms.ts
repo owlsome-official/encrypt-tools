@@ -29,7 +29,7 @@ export const inputAtom = atom<string>(DEFAULT_INPUT);
 
 export const aadEnabledAtom = atom<boolean>(false);
 export const aadVersionAtom = atom<number>(1);
-export const aadTimestampAtom = atom<number>(Math.floor(Date.now() / 1000));
+export const aadTimestampAtom = atom<number>(0);
 
 // ─── Decoded AAD from decrypt result (read-only display) ─────────────
 

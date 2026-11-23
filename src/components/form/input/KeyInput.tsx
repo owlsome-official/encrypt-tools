@@ -1,4 +1,9 @@
-import { algorithmAtom, keyAtom, keyIsBase64Atom, keyWithAutoDetectAtom } from "@/lib/atoms";
+import {
+  algorithmAtom,
+  keyAtom,
+  keyIsBase64Atom,
+  keyWithAutoDetectAtom,
+} from "@/lib/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import InputWithLabel from ".";
 
@@ -13,6 +18,7 @@ const KeyInput = () => {
   return (
     <div className={isFullWidth ? "w-full" : "w-2/3"}>
       <InputWithLabel
+        id="key"
         label="Key:"
         value={key}
         placeholder="Enter your own secret key"
