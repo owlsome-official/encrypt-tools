@@ -1,10 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  buildAad,
-  decryptGCM,
-  encryptGCM,
-  parseAadHeader,
-} from "../crypto";
+import { buildAad, decryptGCM, encryptGCM, parseAadHeader } from "../crypto";
 
 const KEY_32 = "67890123456789012345678901234567";
 const PLAINTEXT = `{"firstname":"Chinnawat","lastname":"Chimdee"}`;

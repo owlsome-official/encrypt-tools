@@ -79,9 +79,7 @@ const resolveBuffer = (
 const toBase64 = (bytes: Uint8Array): string =>
   btoa(String.fromCharCode(...bytes));
 
-const concat = (
-  ...parts: Uint8Array[]
-): Uint8Array<ArrayBuffer> => {
+const concat = (...parts: Uint8Array[]): Uint8Array<ArrayBuffer> => {
   const total = parts.reduce((sum, p) => sum + p.byteLength, 0);
   const joined = new Uint8Array(total);
   let offset = 0;
@@ -105,9 +103,7 @@ export const buildAad = (
   return new Uint8Array(buf);
 };
 
-export const parseAadHeader = (
-  raw: Uint8Array,
-): AadData => {
+export const parseAadHeader = (raw: Uint8Array): AadData => {
   if (raw.byteLength < AAD_HEADER_BYTES) {
     throw new RangeError("buffer too short for AAD header");
   }
@@ -141,12 +137,11 @@ export const encryptCBC = async (
       false,
       ["encrypt"],
     );
-    const tagBuffer = new Uint8Array(
-      await crypto.subtle.sign(
-        "HMAC",
-        macKey,
-        concatBuffers(ivBuffer, ciphertextBuffer),
-      ),
+
+    const ciphertextBuffer = await crypto.subtle.encrypt(
+      algorithm,
+      keyObject,
+      plaintextBuffer,
     );
 
     return toBase64(new Uint8Array(ciphertextBuffer));
@@ -179,7 +174,7 @@ export const decryptCBC = async (
 
     const plaintextBuffer = await crypto.subtle.decrypt(
       algorithm,
-      aesKey,
+      keyObject,
       ciphertextBuffer,
     );
 

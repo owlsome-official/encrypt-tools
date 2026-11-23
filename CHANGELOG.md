@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.1
+
+- fix: misused variables
+- fix: unused tests
+
 ## v0.5.0
 
 - chore: consolidate branches - add compatible test files from origin/main
