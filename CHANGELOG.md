@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.0
+
+- chore: consolidate branches - add compatible test files from origin/main
+- chore: remove incompatible cherry-picked tests (written for HMAC crypto)
+- chore: update preview image
+- feat: refactor crypto.ts - add AES-GCM with optional AAD alongside legacy AES-CBC
+- feat: add algorithm, AAD atoms and GCM-aware result atom
+- feat: add AES-GCM page (default) with AAD panel + Legacy AES-CBC page with navigation
+- test: add AES-GCM test suite - nonce uniqueness, roundtrip, tamper, AAD roundtrip/mismatch/tamper
+- fix: resolve hydration mismatch - use stable default for aadTimestampAtom, set now() on client mount
+- fix: prevent SSR hydration mismatch - defer result rendering to client via useSyncExternalStore
+
 ## v0.4.2
 
 - [Edited] Updated dependencies
